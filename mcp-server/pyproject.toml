@@ -1,0 +1,36 @@
+[project]
+name = "hub-graphql-mcp"
+version = "0.1.0"
+description = "Read-only MCP server exposing Cloud Foundry inventory and service health from the Tanzu Hub GraphQL API"
+requires-python = ">=3.12,<3.13"
+dependencies = [
+  "fastapi>=0.115.0",
+  "fastmcp>=3.0.0,<5",
+  "graphql-core>=3.2.0",
+  "httpx>=0.28.0",
+  "uvicorn[standard]>=0.32.0",
+]
+
+[dependency-groups]
+dev = [
+  "pytest>=8.3.0",
+  "pytest-asyncio>=0.24.0",
+  "ruff>=0.14.0",
+]
+
+[tool.uv]
+package = false
+
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "B", "UP", "S"]
+ignore = ["S101"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["."]
+asyncio_mode = "auto"
+asyncio_default_fixture_loop_scope = "function"

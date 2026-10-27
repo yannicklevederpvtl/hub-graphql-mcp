@@ -1,0 +1,38 @@
+---
+applications:
+- name: hub-graphql-mcp
+  metadata:
+    labels:
+      ai.tanzu.com/type: mcp-server
+      access-mode: read-only
+  path: .
+  buildpacks:
+  - python_buildpack
+  memory: 512M
+  disk_quota: 1G
+  instances: 2
+  routes:
+  # Internal route for MCP Gateway / agents (container-to-container). Add a public route
+  # such as hub-graphql-mcp.apps.<domain> only if MCP clients connect directly.
+  - route: hub-graphql-mcp.apps.internal
+  health-check-type: http
+  health-check-http-endpoint: /health
+  services:
+  # cf cups hub-graphql-mcp-creds -p '{"client_id":"...","client_secret":"...","mcp_api_key":"..."}'
+  - hub-graphql-mcp-creds
+  env:
+    HUB_URL: "https://hub.tas06.ylhomelab.com/hub"
+    HUB_CREDS_SERVICE: "hub-graphql-mcp-creds"
+    # Service-account client_credentials at https://<hub-host>/auth/oauth/token
+    # (override with HUB_TOKEN_URL if Hub's UAA lives elsewhere).
+    HUB_AUTH_MODE: "client_credentials"
+    # System bundle that includes the corporate CA in front of Hub (TLS verification stays on).
+    CA_BUNDLE: "/etc/ssl/certs/ca-certificates.crt"
+    REQUEST_TIMEOUT_SECONDS: "20"
+    MAX_RETRIES: "3"
+    MAX_CONCURRENCY: "8"
+    PAGE_SIZE: "100"
+    MAX_ITEMS: "1000"
+    ENABLE_MYSQL_DEEP_STATUS: "false"
+    # MYSQL_DEEP_STATUS_URL_TEMPLATE: "https://<mysql-status-endpoint>/{guid}/v0/backends"
+    LOG_LEVEL: "INFO"

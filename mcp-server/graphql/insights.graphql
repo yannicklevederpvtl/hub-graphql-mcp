@@ -1,0 +1,7 @@
+# Optional: the insights/alerts selection for an entity, copied from Hub's Altair client:
+#   Collections > "Entity queries" > "Entity Details with Insights"
+# Paste only the insights field with its sub-selection (it is inserted into each service
+# instance selection), for example:
+#   insights { ... }
+# Leave this file comment-only to disable alert-based health; status then relies on the
+# service instance's last-operation state.

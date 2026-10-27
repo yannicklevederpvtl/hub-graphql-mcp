@@ -1,0 +1,118 @@
+# Subset of the Tanzu Hub schema this server relies on, checked against a live Hub. It pins
+# the query shapes in tests; schema_check.py validates the same documents against the live
+# schema.
+scalar JSON
+
+type Query {
+  entityQuery: EntityQuery
+  authQuery: AuthQuery
+}
+
+type AuthQuery {
+  queryAllRoleBindings(
+    first: Int
+    after: String
+    provider: [AuthRoleBindingProviderEnum!]
+    scopeType: [AuthRoleBindingScopeType!]
+    scopingEntityId: [String!]
+  ): AuthRoleBindingConnection
+}
+
+enum AuthRoleBindingProviderEnum { TP4CF PLATFORM PLATFORM_SYSTEM }
+enum AuthRoleBindingScopeType {
+  GLOBAL CLOUD_FOUNDRY_FOUNDATION CLOUD_FOUNDRY_ORGANIZATION CLOUD_FOUNDRY_SPACE
+}
+enum AuthRoleBindingSubjectType { USER GROUP OAUTH_APP }
+
+type AuthRoleBindingConnection {
+  roleBindings: [AuthRoleBinding!]
+  pageInfo: PageInfo!
+  totalCount: Int
+}
+
+type AuthRoleBinding {
+  bindingId: String!
+  scopeType: AuthRoleBindingScopeType
+  subjectId: String!
+  subjectType: AuthRoleBindingSubjectType!
+  role: AuthRole!
+  user: User
+  group: UserGroup
+  scopingEntity: Entity
+}
+
+type AuthRole { name: String! }
+type User { username: String! email: String origin: String }
+type UserGroup { groupName: String }
+
+type EntityQuery {
+  queryEntities(
+    entityType: [String]
+    entityId: [String]
+    first: Int
+    after: String
+    before: String
+    filter: EntityQueryFilter
+    entitiesTraversalFilter: EntityTraversalFilterInput
+    sort: [QuerySort]
+  ): EntityConnection
+}
+
+input QuerySort {
+  field: String!
+  order: SortOrder
+  nulls: NullsOrder
+}
+
+enum SortOrder { ASC DESC }
+enum NullsOrder { FIRST LAST }
+
+input EntityQueryFilter {
+  field: String
+  operator: FilterOperator
+  value: String
+  values: [String]
+}
+
+enum FilterOperator { EQ EQUALS IN }
+
+input EntityTraversalFilterInput {
+  entitiesTraversal: [EntityTraversalInput!]
+  nestedFilters: [EntityTraversalFilterInput!]
+}
+
+input EntityTraversalInput {
+  direction: TraversalDirection!
+  entityType: [String!]
+  entityName: [String!]
+  filter: EntityQueryFilter
+}
+
+enum TraversalDirection { IN OUT }
+
+type EntityConnection {
+  entities: [Entity]
+  pageInfo: PageInfo
+  totalCount: Int
+}
+
+type PageInfo {
+  hasNextPage: Boolean
+  endCursor: String
+}
+
+type Entity {
+  entityId: ID
+  entityName: String
+  entityType: String
+  lastUpdateTime: String
+  provider: String
+  properties: [Property]
+  entitiesIn(entityType: String, first: Int, after: String): EntityConnection
+  entitiesOut(entityType: String, first: Int, after: String): EntityConnection
+}
+
+type Property {
+  name: String
+  value: JSON
+}

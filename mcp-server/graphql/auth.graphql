@@ -1,0 +1,12 @@
+# Paste the service-account authentication mutation here, copied from Hub's Altair client:
+#   https://<hub-host>/hub/altair > Collections > "01 - Starter - Auth and simple queries"
+#   > "01 - Authentication"
+#
+# Supported forms:
+#   - Variables whose names contain "id"/"client" and "secret", e.g. ($clientId, $clientSecret)
+#   - Altair placeholders inside string literals: "{{TANZU_CLIENT_ID}}", "{{TANZU_CLIENT_SECRET}}"
+#   - Anything else: set HUB_AUTH_VARIABLES, e.g.
+#       {"input": {"clientId": "$client_id", "clientSecret": "$client_secret"}}
+#
+# The token is located automatically (accessToken / access_token / token ...); set
+# HUB_AUTH_TOKEN_PATH (dotted path under "data") if detection picks the wrong field.

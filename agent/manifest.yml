@@ -1,0 +1,38 @@
+---
+# Example Tanzu agent that uses the hub-graphql-mcp server. Configuration only:
+# AGENTS.md + .agents/skills/ + bindings. Deploy with ../scripts/deploy.sh, which creates the
+# services, the network policy to the MCP server, and optional SSO.
+applications:
+- name: hub-platform-agent
+  metadata:
+    labels:
+      ai.tanzu.com/type: agent   # lists the app under Tanzu Hub > Workloads > Agents
+  path: .
+  buildpacks:
+  - agent_buildpack
+  memory: 1G
+  disk_quota: 1G
+  health-check-type: http
+  health-check-http-endpoint: /health
+  services:
+  - hub-platform-model       # ai-models
+  # cf cups hub-graphql-mcp-tools -t mcp-server \
+  #   -p '{"url":"http://hub-graphql-mcp.apps.internal:8080/mcp","api_key":"<mcp_api_key>"}'
+  - hub-graphql-mcp-tools
+  env:
+    TANZU_AGENT_DISPLAY_NAME: Platform Health Assistant
+    TANZU_AGENT_DESCRIPTION: Cloud Foundry inventory, roles and service health from Tanzu Hub (read-only)
+    TANZU_AGENT_WELCOME_SUGGESTION_1: Which service instances are unhealthy right now?
+    TANZU_AGENT_WELCOME_SUGGESTION_2: Is the MySQL database in system/pivotal-services healthy?
+    TANZU_AGENT_WELCOME_SUGGESTION_3: Who has access to the demobu1 org?
+    TANZU_AGENT_WELCOME_SUGGESTION_4: List the service instances in the dev org.
+    TANZU_AGENT_REASONING_EFFORT: low
+    TANZU_AGENT_MAX_TOKENS: 8192
+    TANZU_AGENT_TIME_GRANULARITY: hour
+    # The MCP tools are read-only; no built-in tools that could change anything.
+    TANZU_AGENT_FILESYSTEM_ACCESS: "off"
+    TANZU_AGENT_SHELL_ACCESS_ENABLED: false
+    TANZU_AGENT_WEB_SEARCH_ENABLED: false
+    TANZU_AGENT_ENABLE_DEBUG_UI: true
+    TANZU_AGENT_LOG_JSON: true
+    TANZU_AGENT_LOG_LEVEL: INFO

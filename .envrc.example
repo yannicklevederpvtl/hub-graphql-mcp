@@ -1,0 +1,14 @@
+# Copy to .envrc (git-ignored) and fill in. Never commit real values.
+# Then: set -a; source .envrc; set +a; scripts/deploy.sh
+# Log in first: cf login -a https://api.sys.<FOUNDATION-DOMAIN> --sso ; cf target -o <ORG> -s <SPACE>
+
+# MCP server: Hub service account (Administration > Access > Service Accounts)
+export HUB_CLIENT_ID=<SERVICE-ACCOUNT-ID>
+export HUB_CLIENT_SECRET=<SERVICE-ACCOUNT-SECRET>
+# export MCP_API_KEY=<KEY>          # optional: default keeps the existing key or generates one
+
+# Agent
+export MODEL_PLAN=<AI-MODELS-PLAN>  # cf marketplace -e ai-models
+# export DEFAULT_MODEL=<MODEL-NAME> # optional: a model served by that plan
+# export SSO_PLAN=<P-IDENTITY-PLAN> # recommended: cf marketplace -e p-identity
+# export MCP_URL=https://<public-route>/mcp   # only if the server is not on apps.internal
